@@ -26,7 +26,10 @@ namespace WorkManager31.Data
                 FirstName = "Tryb",
                 LastName = "Tryb",
                 EmailConfirmed = true,
-                PhoneNumberConfirmed = true
+                PhoneNumberConfirmed = true,
+                TwoFactorEnabled = false,
+                LockoutEnabled = true,
+                AccessFailedCount = 10
             };
             if (userManager.Users.All(u => u.Id != defaultUser.Id))
             {
