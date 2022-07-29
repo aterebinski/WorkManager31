@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WorkManager31.Models;
@@ -18,11 +19,12 @@ namespace WorkManager31.Data
 
         public static async Task SeedSuperAdminAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
+            Console.WriteLine("1111111111111111111111111111111111111111");
             //Seed Default User
             var defaultUser = new ApplicationUser
             {
                 UserName = "superadmin",
-                Email = "tryb77@wp.com",
+                Email = "tryb77@wp.pl",
                 FirstName = "Tryb",
                 LastName = "Tryb",
                 EmailConfirmed = true,
@@ -33,6 +35,7 @@ namespace WorkManager31.Data
             };
             if (userManager.Users.All(u => u.Id != defaultUser.Id))
             {
+                Console.WriteLine("22222222222222222222222222222222");
                 var user = await userManager.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
