@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WorkManager31.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WorkManager31.Controllers
 {
@@ -18,6 +19,7 @@ namespace WorkManager31.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(Roles = "SuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> Manage(string userId)
         {
@@ -49,6 +51,8 @@ namespace WorkManager31.Controllers
             }
             return View(model);
         }
+
+        [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> Manage(List<ManageUserRolesViewModel> model, string userId)
         {
