@@ -35,7 +35,7 @@ namespace WorkManager31.Services
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress("Joe@contoso.com", "Password Recovery"),
+                From = new EmailAddress("aterebinski@wp.pl", "Confirm email"),
                 Subject = subject,
                 PlainTextContent = message,
                 HtmlContent = message
