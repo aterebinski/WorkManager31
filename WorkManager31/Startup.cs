@@ -44,10 +44,32 @@ namespace WorkManager31
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddTransient<IEmailSender, EmailSender>();
+
 
             //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ForSuperAdmin", policy =>
+                {
+                    policy.RequireRole("Superadmin");
+                });
+                options.AddPolicy("ForAdmin", policy =>
+                {
+                    policy.RequireRole("Admin", "Superadmin");
+                });
+                options.AddPolicy("ForModerator", policy =>
+                {
+                    policy.RequireRole("Moderator","Admin", "Superadmin");
+                });
+                options.AddPolicy("ForBasic", policy =>
+                {
+                    policy.RequireRole("Basic","Moderator", "Admin", "Superadmin");
+                });
+
+            });
+            services.AddTransient<IEmailSender, EmailSender>();
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.Configure<AuthMessageSenderOptions>(Configuration);
