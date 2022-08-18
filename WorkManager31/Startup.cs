@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -44,10 +45,21 @@ namespace WorkManager31
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddTransient<IEmailSender, EmailSender>();
+
 
             //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddTransient<IEmailSender, EmailSender>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ForSuperAdmin", policy => policy.RequireRole("SuperAdmin"));
+                options.AddPolicy("ForAdmin", policy => policy.RequireRole("Admin", "SuperAdmin"));
+                options.AddPolicy("ForModerator", policy => policy.RequireRole("Moderator", "Admin", "SuperAdmin"));
+                options.AddPolicy("ForBasic", policy => policy.RequireRole("Basic", "Moderator", "Admin", "SuperAdmin"));
+            });
+
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.Configure<AuthMessageSenderOptions>(Configuration);
