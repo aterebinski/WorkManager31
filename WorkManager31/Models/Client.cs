@@ -12,6 +12,7 @@ namespace WorkManager31.Models
         public bool Del { get; set; }
 
         public virtual ICollection<Job> Jobs { get; set; }
+        public ICollection<ClientGroupElement> clientGroupElements { get; set; }
 
     }
 }
