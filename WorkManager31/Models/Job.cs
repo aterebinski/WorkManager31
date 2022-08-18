@@ -10,10 +10,14 @@ namespace WorkManager31.Models
         public string Name { get; set; }
         public int ClientId { get; set; }
         public int AssignmentId { get; set; }
+        public bool Del { get; set; }
         public bool Done { get; set; }
         public int DoneByUserId { get; set; }
         [DataType(DataType.DateTime)]
         public DateTime DoneDate { get; set; }
+
+        public virtual Assignment Assignment { get; set; }
+        public virtual Client Client { get; set; }  
 
     }
 }

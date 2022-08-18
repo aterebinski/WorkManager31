@@ -48,5 +48,11 @@ namespace WorkManager31.Data
                 entity.ToTable("UserTokens");
             });
         }
+
+        public DbSet<WorkManager31.Models.Assignment> Assignment { get; set; }
+
+        public DbSet<WorkManager31.Models.Client> Client { get; set; }
+
+        public DbSet<WorkManager31.Models.Job> Job { get; set; }
     }
 }
