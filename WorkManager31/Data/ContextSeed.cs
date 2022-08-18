@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WorkManager31.Models;
@@ -45,6 +46,57 @@ namespace WorkManager31.Data
                 }
 
             }
+        }
+
+        public static Task SeedClientsAsync(ApplicationDbContext dbContext)
+        {
+            
+            
+
+            List<Client> clients = new List<Client>
+            {
+                new Client { Name = "INMED"},
+                new Client { Name = "VITAMED" },
+                new Client { Name = "KACZMAREKMED"},
+                new Client { Name = "HELPMED Brudzew"},
+                new Client { Name = "SANMED Kłodawa" },
+                new Client { Name = "Powidz" },
+                new Client { Name = "Władysławów" },
+                new Client { Name = "Wilczyn" },
+                new Client { Name = "MEDICON Łężyn" },
+                new Client { Name = "CYRULIK Dobra" },
+                new Client { Name = "Tuliszków" },
+                new Client { Name = "Kowale Pańskie" },
+                new Client { Name = "Zagórów" },
+                new Client { Name = "MEDINET" },
+                new Client { Name = "FENIKS Bogacki" },
+                new Client { Name = "Chmielewska Rehabilitacja" },
+                new Client { Name = "MEDINET" },
+                new Client { Name = "MEDYK Turek" },
+                new Client { Name = "MEDICUS Turek" },
+                new Client { Name = "Kramsk" },
+                new Client { Name = "MEDALKO" },
+                new Client { Name = "MAR MAXMED1" },
+                new Client { Name = "MEDINET" },
+                new Client { Name = "Kazimierz Biskupi" },
+                new Client { Name = "ÓSEMKA" },
+                new Client { Name = "KOLMED" },
+                new Client { Name = "MEDINET" },
+                new Client { Name = "ORTOMED Koło" },
+                new Client { Name = "ONKOMED Konin" },
+                new Client { Name = "Centrum Zdrowia Psychicznego" },
+                new Client { Name = "MEDALKO Rehabilitacja" }
+
+            };
+
+            foreach (Client client in clients)
+            {
+                if (dbContext.Client.FirstOrDefault<Client>(i => i.Name == client.Name) == null) dbContext.Client.Add(client);
+            }
+
+            dbContext.SaveChanges();
+            
+            return Task.FromResult(0);
         }
     }
 }
