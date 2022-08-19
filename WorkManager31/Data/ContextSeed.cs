@@ -48,6 +48,32 @@ namespace WorkManager31.Data
             }
         }
 
+        public static Task SeedClientGroupsAsync(ApplicationDbContext dbContext)
+        {
+            List<ClientGroup> clientGroups = new List<ClientGroup>
+            {
+                new ClientGroup{Name = "POZ"},
+                new ClientGroup{Name = "SOZ"},
+                new ClientGroup{Name = "Rehabilitacja"},
+                new ClientGroup{Name = "Stomatolog"},
+                new ClientGroup{Name = "Rozliczenia"},
+                new ClientGroup{Name = "SOMED"},
+                new ClientGroup{Name = "PPS"},
+                new ClientGroup{Name = "Serum"}
+            };
+
+            foreach (ClientGroup clientGroup in clientGroups)
+            {
+                if (dbContext.ClientGroup.FirstOrDefault<ClientGroup>(i=> i.Name == clientGroup.Name)== null)
+                {
+                    dbContext.ClientGroup.Add(clientGroup);
+                }
+            }
+            dbContext.SaveChanges();
+            
+            return Task.FromResult(0);
+        }
+
         public static Task SeedClientsAsync(ApplicationDbContext dbContext)
         {
             
