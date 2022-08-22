@@ -2,7 +2,7 @@
 
 namespace WorkManager31.Data.Migrations
 {
-    public partial class AddClientGroupsmodels : Migration
+    public partial class AddClientGroupandClientGroupElementmodel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,7 +27,8 @@ namespace WorkManager31.Data.Migrations
                 schema: "Identity",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ClientGroupId = table.Column<int>(nullable: true),
                     ClientId = table.Column<int>(nullable: true)
                 },

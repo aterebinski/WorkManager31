@@ -10,8 +10,8 @@ using WorkManager31.Data;
 namespace WorkManager31.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220818132840_Add ClientGroups models")]
-    partial class AddClientGroupsmodels
+    [Migration("20220822134634_Add ClientGroup and ClientGroupElement model")]
+    partial class AddClientGroupandClientGroupElementmodel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -347,8 +347,10 @@ namespace WorkManager31.Data.Migrations
 
             modelBuilder.Entity("WorkManager31.Models.ClientGroupElement", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int?>("ClientGroupId")
                         .HasColumnType("int");

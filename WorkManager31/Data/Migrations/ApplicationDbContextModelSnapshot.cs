@@ -345,8 +345,10 @@ namespace WorkManager31.Data.Migrations
 
             modelBuilder.Entity("WorkManager31.Models.ClientGroupElement", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int?>("ClientGroupId")
                         .HasColumnType("int");
