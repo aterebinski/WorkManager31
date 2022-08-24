@@ -30,7 +30,7 @@ namespace WorkManager31
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                     await ContextSeed.SeedRolesAsync(userManager, roleManager);
                     await ContextSeed.SeedSuperAdminAsync(userManager, roleManager);
-                    //await ContextSeed.SeedClientGroupsAsync(context);
+                    await ContextSeed.SeedClientGroupsAsync(context);
                     await ContextSeed.SeedClientsAsync(context);
                     
                 }

@@ -48,7 +48,7 @@ namespace WorkManager31.Data
             }
         }
 
-        /*public static Task SeedClientGroupsAsync(ApplicationDbContext dbContext)
+        public static Task SeedClientGroupsAsync(ApplicationDbContext dbContext)
         {
             List<ClientGroup> clientGroups = new List<ClientGroup>
             {
@@ -73,7 +73,7 @@ namespace WorkManager31.Data
             
             return Task.FromResult(0);
         }
-        */
+        
         public static Task SeedClientsAsync(ApplicationDbContext dbContext)
         {
             

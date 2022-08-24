@@ -145,9 +145,86 @@ namespace WorkManager31.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Clients/Groups/5
+        public async Task<IActionResult> Groups(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var client = await _context.Client.FindAsync(id);
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            ClientGroupsCheckListViewModel clientGroupsCheckListVM = new ClientGroupsCheckListViewModel();
+
+            List<ClientGroup> allClientGroups = _context.ClientGroup.ToList<ClientGroup>();
+
+            
+
+            foreach (var clientGroup in allClientGroups)
+            {
+                var match = from clGroupElement in _context.ClientGroupElement
+                            where clGroupElement.ClientGroup.Id == clientGroup.Id
+                            where clGroupElement.Client.Id == id
+                            select clGroupElement.Id;
+
+                if (match==null)
+                {
+                    clientGroupsCheckListVM.Checks.Add(clientGroup, false);
+                }
+                else
+                {
+                    clientGroupsCheckListVM.Checks.Add(clientGroup, true);   
+                }
+            }
+            ViewBag.ClientGroupsCheckListVM = clientGroupsCheckListVM;
+            return View(client);
+        }
+
+        // POST: Clients/Groups/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Groups(int id, [Bind("Id,Name,Description,Del")] Client client)
+        {
+            if (id != client.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(client);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ClientExists(client.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(client);
+        }
+
         private bool ClientExists(int id)
         {
             return _context.Client.Any(e => e.Id == id);
         }
+
+
     }
 }
