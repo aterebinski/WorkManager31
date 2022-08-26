@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WorkManager31.Data;
 using WorkManager31.Models;
 
@@ -13,10 +14,12 @@ namespace WorkManager31.Controllers
     public class ClientsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<ClientsController> _logger;
 
-        public ClientsController(ApplicationDbContext context)
+        public ClientsController(ApplicationDbContext context, ILogger<ClientsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Clients
@@ -181,8 +184,14 @@ namespace WorkManager31.Controllers
                     clientGroupsCheckListVM.Checks.Add(clientGroup, true);   
                 }
             }
-            ViewBag.ClientGroupsCheckListVM = clientGroupsCheckListVM;
-            return View(client);
+
+            clientGroupsCheckListVM.Id = (int)id;
+            clientGroupsCheckListVM.Name = client.Name;
+            clientGroupsCheckListVM.Description = client.Description;
+
+            //ViewBag.ClientGroupsCheckListVM = clientGroupsCheckListVM;
+            
+            return View(clientGroupsCheckListVM);
         }
 
         // POST: Clients/Groups/5
@@ -190,34 +199,58 @@ namespace WorkManager31.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Groups(int id, [Bind("Id,Name,Description,Del")] Client client)
+        public async Task<IActionResult> Groups(int id, ClientGroupsCheckListViewModel clientGroup)
         {
-            if (id != client.Id)
-            {
-                return NotFound();
-            }
+            //if (id != client.Id)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
-                try
+                _logger.LogInformation("1111111111111111111111111111111111");
+                _logger.LogInformation("clientId: " +id);
+                _logger.LogInformation("Name: "+ clientGroup.Name);
+                _logger.LogInformation("Descriptopn:"+clientGroup.Description);
+                _logger.LogInformation("Checks:" + clientGroup.Checks);
+                _logger.LogInformation("ClientGroup:" + clientGroup);
+
+                foreach (var checks in clientGroup.Checks)
                 {
-                    _context.Update(client);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClientExists(client.Id))
+                    _logger.LogInformation("222222222222222222222222222222222");
+                    Client client = await _context.Client.FindAsync(id);
+
+                    ClientGroupElement matchedClientGroupElement = (ClientGroupElement)(from clGroupElement in _context.ClientGroupElement
+                                where clGroupElement.Client.Id == id
+                                where clGroupElement.ClientGroup.Id == checks.Key.Id
+                                select clGroupElement);   
+
+                    if (checks.Value)
                     {
-                        return NotFound();
+                        _logger.LogInformation("33333333333333333333333333333333333333");
+                        if (matchedClientGroupElement == null)
+                        {
+                            _logger.LogInformation("4444444444444444444444444444444444444444");
+                            ClientGroupElement clientGroupElement = new ClientGroupElement { Client = client, ClientGroup = checks.Key };
+                            _context.ClientGroupElement.Add(clientGroupElement);
+                            await _context.SaveChangesAsync();
+                        }
                     }
                     else
                     {
-                        throw;
+                        if (matchedClientGroupElement != null)
+                        {
+                            _context.ClientGroupElement.Remove(matchedClientGroupElement);
+                            await _context.SaveChangesAsync();
+                        }
                     }
                 }
+
+                //_context.Update(client);
+                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(client);
+            return View();
         }
 
         private bool ClientExists(int id)

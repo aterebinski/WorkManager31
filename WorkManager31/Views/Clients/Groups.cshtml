@@ -1,4 +1,4 @@
-﻿@model WorkManager31.Models.Client
+﻿@model WorkManager31.Models.ClientGroupsCheckListViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,16 +11,16 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            Name
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+            @Model.Name
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
+            Description
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
+            @Model.Description
         </dd>
     </dl>
 </div>
@@ -36,10 +36,11 @@
             <div class="card-text">
                 <div class="form-group">
 
-                @foreach (var item in ViewBag.ClientGroupsCheckListVM.Checks)
+                @foreach (var item in Model.Checks)
                 {
 
                     <div class="checkbox">
+                        @Html.CheckBoxFor(i => item.)
                         <label>
                             <input type="checkbox" value="@item.Key.Id">
                             @item.Key.Name
@@ -56,8 +57,6 @@
         <input type="submit" value="Save" class="btn btn-primary" />
     </div>
     </p>
-    <div>
 </form>
 <a asp-action="Index">Back to List</a>
-</div>
 
