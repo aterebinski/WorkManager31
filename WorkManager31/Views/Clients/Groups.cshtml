@@ -4,7 +4,7 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Groups</h1>
 
 <div>
     <h4>Client</h4>
@@ -14,18 +14,19 @@
             Name
         </dt>
         <dd class = "col-sm-10">
-            @Model.Name
+            @Html.DisplayFor(model => model.Name)
         </dd>
         <dt class = "col-sm-2">
             Description
         </dt>
         <dd class = "col-sm-10">
-            @Model.Description
+            @Html.DisplayFor(model => model.Description)
         </dd>
     </dl>
 </div>
 
-<form asp-action="Groups">
+     @using (Html.BeginForm("Groups", "Clients", FormMethod.Post))
+    {
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
     <div class="card">
@@ -36,15 +37,11 @@
             <div class="card-text">
                 <div class="form-group">
 
-                @foreach (var item in Model.Checks)
+                @for(var i = 0; i<Model.Checks.Count;i++)
                 {
-
-                    <div class="checkbox">
-                        @Html.CheckBoxFor(i => item.)
-                        <label>
-                            <input type="checkbox" value="@item.Key.Id">
-                            @item.Key.Name
-                        </label>
+                    <div class="form-group form-check">
+                            @Html.CheckBox(Model.Checks.ElementAt(i).Key.Name, Model.Checks.ElementAt(i).Value, new {@id=Model.Checks.ElementAt(i).Key.Id, @class="form-check-input"})
+                            <label class="form-check-label" for="@Model.Checks.ElementAt(i).Key.Id">@Model.Checks.ElementAt(i).Key.Name</label>
                     </div>
                 }
 
@@ -57,6 +54,6 @@
         <input type="submit" value="Save" class="btn btn-primary" />
     </div>
     </p>
-</form>
+}
 <a asp-action="Index">Back to List</a>
 

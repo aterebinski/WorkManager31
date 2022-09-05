@@ -170,18 +170,22 @@ namespace WorkManager31.Controllers
 
             foreach (var clientGroup in allClientGroups)
             {
+                _logger.LogInformation("ClientGroup: " + clientGroup.Name);
+
                 var match = from clGroupElement in _context.ClientGroupElement
                             where clGroupElement.ClientGroup.Id == clientGroup.Id
                             where clGroupElement.Client.Id == id
-                            select clGroupElement.Id;
+                            select new { clGroupElement };
 
-                if (match==null)
+                if (match.Count()>0)
                 {
-                    clientGroupsCheckListVM.Checks.Add(clientGroup, false);
+                    clientGroupsCheckListVM.Checks.Add(clientGroup, true);
+                    
                 }
                 else
                 {
-                    clientGroupsCheckListVM.Checks.Add(clientGroup, true);   
+                    clientGroupsCheckListVM.Checks.Add(clientGroup, false);
+                    //_logger.LogInformation("Match: " + match.Count());
                 }
             }
 
@@ -201,10 +205,10 @@ namespace WorkManager31.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Groups(int id, ClientGroupsCheckListViewModel clientGroup)
         {
-            //if (id != client.Id)
-            //{
-            //    return NotFound();
-            //}
+            if (id != clientGroup.Id)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
