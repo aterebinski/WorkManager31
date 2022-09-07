@@ -177,16 +177,20 @@ namespace WorkManager31.Controllers
                             where clGroupElement.Client.Id == id
                             select new { clGroupElement };
 
+                clientGroupsCheckListVM.Checks.Add(clientGroup.Id, match.Count()>0);
+
+                /*
                 if (match.Count()>0)
                 {
-                    clientGroupsCheckListVM.Checks.Add(clientGroup, true);
+                    clientGroupsCheckListVM.Checks.Add(clientGroup.Id, true);
                     
                 }
                 else
                 {
-                    clientGroupsCheckListVM.Checks.Add(clientGroup, false);
+                    clientGroupsCheckListVM.Checks.Add(clientGroup.Id, false);
                     //_logger.LogInformation("Match: " + match.Count());
-                }
+                } 
+                */
             }
 
             clientGroupsCheckListVM.Id = (int)id;
@@ -213,12 +217,15 @@ namespace WorkManager31.Controllers
             if (ModelState.IsValid)
             {
                 _logger.LogInformation("1111111111111111111111111111111111");
-                _logger.LogInformation("clientId: " +id);
+                _logger.LogInformation("Id: " + id);
+                _logger.LogInformation("clientId: " +clientGroup.Id);
                 _logger.LogInformation("Name: "+ clientGroup.Name);
                 _logger.LogInformation("Descriptopn:"+clientGroup.Description);
-                _logger.LogInformation("Checks:" + clientGroup.Checks);
+                _logger.LogInformation("Checks:" + clientGroup.Checks.Count);
                 _logger.LogInformation("ClientGroup:" + clientGroup);
 
+
+                
                 foreach (var checks in clientGroup.Checks)
                 {
                     _logger.LogInformation("222222222222222222222222222222222");
@@ -226,16 +233,17 @@ namespace WorkManager31.Controllers
 
                     ClientGroupElement matchedClientGroupElement = (ClientGroupElement)(from clGroupElement in _context.ClientGroupElement
                                 where clGroupElement.Client.Id == id
-                                where clGroupElement.ClientGroup.Id == checks.Key.Id
+                                where clGroupElement.ClientGroup.Id == checks.Key
                                 select clGroupElement);   
 
-                    if (checks.Value)
+                    if (checks.Value) //jesli checkbox jest zaznaczony
                     {
                         _logger.LogInformation("33333333333333333333333333333333333333");
-                        if (matchedClientGroupElement == null)
+                        if (matchedClientGroupElement == null) //jesli jeszcze brak zaznaczenia w bazie to je dodaj
                         {
                             _logger.LogInformation("4444444444444444444444444444444444444444");
-                            ClientGroupElement clientGroupElement = new ClientGroupElement { Client = client, ClientGroup = checks.Key };
+                            ClientGroup addingClientGroup = _context.ClientGroup.Find(checks.Key); 
+                            ClientGroupElement clientGroupElement = new ClientGroupElement { Client = client, ClientGroup = addingClientGroup };
                             _context.ClientGroupElement.Add(clientGroupElement);
                             await _context.SaveChangesAsync();
                         }
