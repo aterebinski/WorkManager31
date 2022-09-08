@@ -172,14 +172,18 @@ namespace WorkManager31.Controllers
             {
                 _logger.LogInformation("ClientGroup: " + clientGroup.Name);
 
+                clientGroupsCheckListVM.clientGroups.Add(clientGroup);
+
                 var match = from clGroupElement in _context.ClientGroupElement
                             where clGroupElement.ClientGroup.Id == clientGroup.Id
                             where clGroupElement.Client.Id == id
                             select new { clGroupElement };
 
-                clientGroupsCheckListVM.Checks.Add(clientGroup.Id, match.Count()>0);
+                //clientGroupsCheckListVM.Checks.Add(clientGroup.Id, match.Count()>0);
 
-                /*
+                //clientGroupsCheckListVM.Checks.Add(clientGroup.Id, true);
+
+
                 if (match.Count()>0)
                 {
                     clientGroupsCheckListVM.Checks.Add(clientGroup.Id, true);
@@ -190,7 +194,7 @@ namespace WorkManager31.Controllers
                     clientGroupsCheckListVM.Checks.Add(clientGroup.Id, false);
                     //_logger.LogInformation("Match: " + match.Count());
                 } 
-                */
+                
             }
 
             clientGroupsCheckListVM.Id = (int)id;
@@ -231,7 +235,7 @@ namespace WorkManager31.Controllers
                     _logger.LogInformation("222222222222222222222222222222222");
                     Client client = await _context.Client.FindAsync(id);
 
-                    ClientGroupElement matchedClientGroupElement = (ClientGroupElement)(from clGroupElement in _context.ClientGroupElement
+                    var matchedClientGroupElement = (from clGroupElement in _context.ClientGroupElement
                                 where clGroupElement.Client.Id == id
                                 where clGroupElement.ClientGroup.Id == checks.Key
                                 select clGroupElement);   
@@ -252,7 +256,7 @@ namespace WorkManager31.Controllers
                     {
                         if (matchedClientGroupElement != null)
                         {
-                            _context.ClientGroupElement.Remove(matchedClientGroupElement);
+                            _context.ClientGroupElement.Remove((ClientGroupElement)matchedClientGroupElement);
                             await _context.SaveChangesAsync();
                         }
                     }
