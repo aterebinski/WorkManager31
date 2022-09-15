@@ -235,10 +235,12 @@ namespace WorkManager31.Controllers
                     _logger.LogInformation("222222222222222222222222222222222");
                     Client client = await _context.Client.FindAsync(id);
 
-                    var matchedClientGroupElement = (from clGroupElement in _context.ClientGroupElement
+                    List<ClientGroupElement> matchedClientGroupElements = (from clGroupElement in _context.ClientGroupElement
                                 where clGroupElement.Client.Id == id
                                 where clGroupElement.ClientGroup.Id == checks.Key
-                                select clGroupElement);   
+                                select clGroupElement).ToList();  
+                    //foreach (ClientGroupElement matchedClientGroupElement in matchedClientGroupElements)    
+                    ClientGroupElement matchedClientGroupElement = matchedClientGroupElements.FirstOrDefault();
 
                     if (checks.Value) //jesli checkbox jest zaznaczony
                     {
