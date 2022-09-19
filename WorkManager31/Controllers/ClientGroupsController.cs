@@ -116,6 +116,86 @@ namespace WorkManager31.Controllers
             return View(clientGroup);
         }
 
+        public async Task<IActionResult> Cliens(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var clientGroup = await _context.ClientGroup.FindAsync(id);
+            if (clientGroup == null)
+            {
+                return NotFound();
+            }
+            
+            ClientsCheckListViewModel clientsCheckListViewModel = new ClientsCheckListViewModel();
+
+            Dictionary<int, bool> clients = from clGroupElement in _context.ClientGroupElement
+                          where clGroupElement.ClientGroup.Id == id
+                          select  clGroupElement.Client.Id, true;
+
+            clientsCheckListViewModel.Id = id;
+            clientsCheckListViewModel.Name = clientGroup.Name;
+            clientsCheckListViewModel.Description = clientGroup.Description;
+
+            
+
+
+            
+
+            return View(clientsCheckListViewModel);
+        }
+
+        // POST: ClientGroups/Clients/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Clients(int id, [Bind("Id,Name,Description,Del")] ClientsCheckListViewModel clientsCheckListViewModel)
+        {
+            if (id != clientsCheckListViewModel.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+
+                List<Client> allClients = _context.Client.ToList();
+                for (int i = 0; i < allClients.Count ; i++)
+                {
+                    if (clientsCheckListViewModel.Checks[i])
+                    {
+
+                    }
+                }
+
+
+
+
+
+                try
+                {
+                    _context.Update(clientGroup);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ClientGroupExists(clientGroup.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(clientGroup);
+        }
+
         // GET: ClientGroups/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
