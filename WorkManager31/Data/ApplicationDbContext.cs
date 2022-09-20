@@ -15,6 +15,14 @@ namespace WorkManager31.Data
         {
         }
 
+        public DbSet<WorkManager31.Models.Assignment> Assignment { get; set; }
+
+        public DbSet<WorkManager31.Models.Client> Client { get; set; }
+
+        public DbSet<WorkManager31.Models.Job> Job { get; set; }
+        public DbSet<WorkManager31.Models.ClientGroup> ClientGroup { get; set; }
+        public DbSet<WorkManager31.Models.ClientGroupElement> ClientGroupElement { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -47,15 +55,17 @@ namespace WorkManager31.Data
             {
                 entity.ToTable("UserTokens");
             });
+            builder.Entity<Client>()
+                .HasMany(u=>u.ClientGroupElements)
+                .
+                //.WillCascadeOnDelete(true);
+                //HasOptional(j => j.JournalEntries)
+                //.WithMany()
+
+            })
+
+
         }
-
-        public DbSet<WorkManager31.Models.Assignment> Assignment { get; set; }
-
-        public DbSet<WorkManager31.Models.Client> Client { get; set; }
-
-        public DbSet<WorkManager31.Models.Job> Job { get; set; }
-        public DbSet<WorkManager31.Models.ClientGroup> ClientGroup { get; set; }
-        public DbSet<WorkManager31.Models.ClientGroupElement> ClientGroupElement { get; set; }
 
     }
 }

@@ -1,38 +1,69 @@
-﻿@model WorkManager31.Models.ClientGroup
+﻿@model WorkManager31.Models.ClientsCheckListViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Clients";
 }
 
-<h1>Edit</h1>
+<h1>Details</h1>
 
-<h4>ClientGroup</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<div>
+    <h4>Client</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
 </div>
+
+@using (Html.BeginForm("Clients", "ClientGroups", FormMethod.Post))
+    {
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="@Model.Id" />
+    <input type="hidden" asp-for="@Model.Name" />
+    <input type="hidden" asp-for="@Model.Description" />
+    <div class="card">
+        <!-- Default panel contents -->
+        
+        <div class="card-body">
+            <h5 class="card-title">Groups</h5>
+            <div class="card-text">
+                <div class="form-group">
+
+                @for(var i = 0; i<Model.Clients.Count();i++)
+                {
+                        <div class="form-group form-check">
+                            @Html.CheckBoxFor(m => Model.Checks[Model.Clients[i].Id], new {@class="form-check-input", @id=Model.Clients[i].Id})
+                        <label class="form-check-label" for="@Model.Clients[i].Id">@Model.Clients[i].Name</label>
+                    </div>
+                }
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+    </p>
+}
+
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

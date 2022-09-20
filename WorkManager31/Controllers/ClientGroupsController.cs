@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WorkManager31.Data;
 using WorkManager31.Models;
 
@@ -13,10 +14,12 @@ namespace WorkManager31.Controllers
     public class ClientGroupsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<ClientGroupsController> _logger;
 
-        public ClientGroupsController(ApplicationDbContext context)
+        public ClientGroupsController(ApplicationDbContext context, ILogger<ClientGroupsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: ClientGroups
@@ -116,7 +119,7 @@ namespace WorkManager31.Controllers
             return View(clientGroup);
         }
 
-        public async Task<IActionResult> Cliens(int id)
+        public async Task<IActionResult> Clients(int id)
         {
             if (id == null)
             {
@@ -128,21 +131,33 @@ namespace WorkManager31.Controllers
             {
                 return NotFound();
             }
-            
+
             ClientsCheckListViewModel clientsCheckListViewModel = new ClientsCheckListViewModel();
 
-            Dictionary<int, bool> clients = from clGroupElement in _context.ClientGroupElement
-                          where clGroupElement.ClientGroup.Id == id
-                          select  clGroupElement.Client.Id, true;
+            var matchClients = (from clGroupElement in _context.ClientGroupElement
+                                                 where clGroupElement.ClientGroup.Id == id
+                                                 select clGroupElement.Client.Id);
+
+
+            clientsCheckListViewModel.Clients = _context.Client.OrderBy(c => c.Name).ToList();
+
+            foreach (var client in clientsCheckListViewModel.Clients)
+            {
+                bool match;
+                int? matchId = (from mc in matchClients
+                                where mc == client.Id
+                                select mc).FirstOrDefault();
+                _logger.LogInformation("================> is: " + matchId);
+
+                match = matchId != 0;
+
+                clientsCheckListViewModel.Checks.Add(client.Id, match);
+            }
+
 
             clientsCheckListViewModel.Id = id;
             clientsCheckListViewModel.Name = clientGroup.Name;
             clientsCheckListViewModel.Description = clientGroup.Description;
-
-            
-
-
-            
 
             return View(clientsCheckListViewModel);
         }
@@ -152,7 +167,7 @@ namespace WorkManager31.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Clients(int id, [Bind("Id,Name,Description,Del")] ClientsCheckListViewModel clientsCheckListViewModel)
+        public async Task<IActionResult> Clients(int id, [Bind("Id,Name,Description")] ClientsCheckListViewModel clientsCheckListViewModel)
         {
             if (id != clientsCheckListViewModel.Id)
             {
@@ -175,25 +190,9 @@ namespace WorkManager31.Controllers
 
 
 
-                try
-                {
-                    _context.Update(clientGroup);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClientGroupExists(clientGroup.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+               
             }
-            return View(clientGroup);
+            return View(clientsCheckListViewModel);
         }
 
         // GET: ClientGroups/Delete/5

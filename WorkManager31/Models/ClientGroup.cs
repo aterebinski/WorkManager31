@@ -10,6 +10,6 @@ namespace WorkManager31.Models
         public string Description { get; set; }
         public bool Del { get; set; }
 
-        public ICollection<ClientGroupElement> ClientGroupElements { get; set; }
+        public virtual ICollection<ClientGroupElement> ClientGroupElements { get; set; }
     }
 }
