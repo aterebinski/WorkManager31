@@ -56,13 +56,19 @@ namespace WorkManager31.Data
                 entity.ToTable("UserTokens");
             });
             builder.Entity<Client>()
-                .HasMany(u=>u.ClientGroupElements)
-                .
-                //.WillCascadeOnDelete(true);
-                //HasOptional(j => j.JournalEntries)
-                //.WithMany()
+                .HasMany(c=>c.ClientGroupElements)
+                .WithOne(cge=>cge.Client)
+                .HasForeignKey(cge => cge.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            })
+            builder.Entity<ClientGroup>()
+                .HasMany(cg => cg.ClientGroupElements)
+                .WithOne(cge => cge.ClientGroup)
+                .HasForeignKey(cge => cge.ClientGroupId)
+                .OnDelete(DeleteBehavior.ClientCascade);
+                
+
+            
 
 
         }
